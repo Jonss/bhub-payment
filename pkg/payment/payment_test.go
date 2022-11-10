@@ -8,52 +8,46 @@ import (
 
 func TestPaymentExecute_SkiLessonVideo(t *testing.T) {
 
-	testCases := []struct {
-		name         string
-		payment      Payment
-		wantProducts []product.Product
-	}{
-		{
-			name: "should add first aid video when product is ski lessons",
-			payment: Payment{
-				amount: 1000,
-				products: []product.Product{
-					{
-						Name:     "Aprendendo a Esquiar",
-						Category: product.VideoCategory,
-					},
-				},
-			},
-			wantProducts: []product.Product{
-				{
-					Name:     "Aprendendo a Esquiar",
-					Category: product.VideoCategory,
-				},
-				{
-					Category: product.VideoCategory,
-					Name:     "Primeiros Socorros",
-				},
-			},
+	payment := Payment{
+		amount: 1000,
+		product: product.Product{
+			Name:     "Aprendendo a Esquiar",
+			Category: product.VideoCategory,
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			tc.payment.Execute()
-
-			for i := 0; i < len(tc.wantProducts); i++ {
-				want := tc.wantProducts[i]
-				got := tc.payment.products[i]
-				if got.Name != want.Name {
-					t.Errorf("Payment.product.name, got %v, want %v", got.Name, want.Name)
-				}
-
-				if string(want.Category) != string(got.Category) {
-					t.Errorf("Payment.product.category, got %v, want %v", got.Category, want.Category)
-				}
-			}
-
-		})
+	if payment.packingSlip != nil {
+		t.Fatal("payment.packingSlip should be nil")
 	}
 
+	payment.Execute()
+
+	wantPackSlip := &PackingSlip{title: "adicione um vídeo gratuito de “Primeiros Socorros”"}
+
+	if payment.packingSlip.title != wantPackSlip.title {
+		t.Fatalf("packingSlip.title got %v, want %v", payment.packingSlip.title, wantPackSlip.title)
+	}
+}
+
+func TestPaymentExecute_PhysicalMedia(t *testing.T) {
+
+	payment := Payment{
+		amount: 1000,
+		product: product.Product{
+			Name:     "Disco dos Titãs",
+			Category: product.PhysicalMediaCategory,
+		},
+	}
+
+	if payment.packingSlip != nil {
+		t.Fatal("payment.packingSlip should be nil")
+	}
+
+	payment.Execute()
+
+	wantPackSlip := &PackingSlip{title: "guia de remessa de envio"}
+
+	if payment.packingSlip.title != wantPackSlip.title {
+		t.Fatalf("packingSlip.title got %v, want %v", payment.packingSlip.title, wantPackSlip.title)
+	}
 }
