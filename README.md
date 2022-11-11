@@ -7,8 +7,8 @@ Caso uma nova regra de negócio seja adicionada, um novo observer deve ser criad
 Para tratar as condições, usei o design pattern `chain of responsibility` como pode ser visto no arquivo `subscribers_chain`. Esse pattern auxilia para deixar mais limpo uma tomada de decisão muito longa, como no caso do projeto proposto, onde várias regras podem ser adicionadas. Ao invés de usar uma infinidade de if/else, ou mesmo um switch, quando uma nova condição for necessária, basta criar uma nova Chain e adicionar no ciclo.
 Um chain chama o próximo chain, até que não hajam mais responsabilidades.
 
-[Chain of responsibility](https://refactoring.guru/design-patterns/chain-of-responsibility)
-[Observer](https://refactoring.guru/design-patterns/observer)
+- [Chain of responsibility](https://refactoring.guru/design-patterns/chain-of-responsibility)
+- [Observer](https://refactoring.guru/design-patterns/observer)
 
 ### 2. Como você pode construir um sistema que seja flexível o suficiente para lidar com acomplexidade e a necessidade dessas mudanças?
 
@@ -25,3 +25,4 @@ Deixando o código com apenas uma responsabilidade e testando os comportamentos 
 - Os arquivos `observer.go` contém todos os observers, num projeto real estaria isolado em vários arquivos. Decidi agrupar todos para não obrigar o revisor a abrir vários arquivos para análise. Segui a mesma ideia com o `subscribers.go`.
 - Não ficou muito claro o que significava `guia de remessa`, então tratei como uma string qualquer.
 - o modelo `product` está muito amplo, podendo ser uma adesão ou um produto. Não pensei numa melhor maneira de deixá-lo mais específico, mas estou ciente que poderia ser melhorado.
+- O método main tem 2 exemplos, os testes podem ser mais úteis para ver como as coisas estão funcionando.
