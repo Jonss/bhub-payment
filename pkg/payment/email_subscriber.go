@@ -7,6 +7,6 @@ import "fmt"
 type EmailSubscriber struct {
 }
 
-func (s *EmailSubscriber) update(payment *Payment) {
-	fmt.Println("EmailObserver")
+func (s *EmailSubscriber) update(payment *payment) {
+	fmt.Println(fmt.Printf("send email when %s", payment.product.Category))
 }

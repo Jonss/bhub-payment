@@ -6,6 +6,6 @@ import "fmt"
 type UpgradeMembershipSubscriber struct {
 }
 
-func (s *UpgradeMembershipSubscriber) update(payment *Payment) {
+func (s *UpgradeMembershipSubscriber) update(payment *payment) {
 	fmt.Println("UpgradeMembershipSubscriber")
 }

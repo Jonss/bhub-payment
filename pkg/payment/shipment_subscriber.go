@@ -4,6 +4,6 @@ package payment
 type ShipmentSubscriber struct {
 }
 
-func (o *ShipmentSubscriber) update(p *Payment) {
+func (o *ShipmentSubscriber) update(p *payment) {
 	p.packingSlip = &PackingSlip{title: "guia de remessa de envio"}
 }

@@ -4,32 +4,39 @@ import (
 	"fmt"
 
 	"github.com/Jonss/bhub-payment/pkg/product"
-	"github.com/Jonss/bhub-payment/pkg/shipment"
 )
 
-type Payment struct {
-	observers   []Observer
-	amount      uint64
+type payment struct {
+	observers   map[string]Observer
+	amount      int64
 	product     product.Product
-	shipment    *shipment.Shipment
 	packingSlip *PackingSlip
+	comission   *int64
+}
+
+func NewPayment(amount int64, product product.Product) payment {
+	return payment{
+		observers: make(map[string]Observer),
+		product:   product,
+		amount:    amount,
+	}
 }
 
 type PackingSlip struct {
 	title string
 }
 
-func (p *Payment) notifyAll() {
+func (p *payment) notifyAll() {
 	for _, o := range p.observers {
 		o.update(p)
 	}
 }
 
-func (p *Payment) register(o Observer) {
-	p.observers = append(p.observers, o)
+func (p *payment) register(name string, o Observer) {
+	p.observers[name] = o
 }
 
-func (p *Payment) Execute() {
+func (p *payment) Execute() {
 	fmt.Println("executes payment")
 
 	//  ● Se o pagamento for para o vídeo específico “Aprendendo a Esquiar”, adicione um
@@ -37,24 +44,48 @@ func (p *Payment) Execute() {
 	// judicial em 1997).
 	if p.product.Name == learningToSki && p.product.Category == product.VideoCategory {
 		subs := &SkiLearningSubscriber{}
-		p.register(subs)
+		p.register("ski_learning_subscriber", subs)
 	}
 
-	//     ● Se o pagamento for para um produto físico, gerar uma guia de remessa para envio.
+	//    ● Se o pagamento for para um produto físico, gerar uma guia de remessa para envio.
 	if p.product.Category == product.PhysicalMediaCategory {
 		subs := &ShipmentSubscriber{}
-		p.register(subs)
+		p.register("shipment_subscriber", subs)
 	}
 
 	// ● Se o pagamento for para um livro, crie uma guia de remessa duplicada para o
 	// departamento de royalties.
+	if p.product.Category == product.BookCategory {
+		subs := &DoubleShipmentSubscriber{}
+		p.register("double_packing_slip", subs)
+	}
+
 	// ● Se o pagamento for para uma nova associação de membro, ative essa associação.
+	if p.product.Category == product.MemberAssociationCategory {
+		subs := &ActivateMembershipSubscriber{}
+		p.register("activate_membership_subscriber", subs)
+	}
+
 	// ● Se o pagamento for um upgrade para uma associação, aplique o upgrade.
+	if p.product.Category == product.MemberAssociationUpgradeCategory {
+		subs := &UpgradeMembershipSubscriber{}
+		p.register("upgrade_membership_subscriber", subs)
+	}
 	// ● Se o pagamento for para uma adesão ou upgrade, envie um e-mail ao proprietário e
 	// informe-o sobre a ativação/upgrade.
+	if p.product.Category == product.MemberAssociationCategory ||
+		p.product.Category == product.MemberAssociationUpgradeCategory {
+		subs := &EmailSubscriber{}
+		p.register("send_email_subscriber", subs)
+	}
 
 	// ● Se o pagamento for para um produto físico ou um livro, gere um pagamento de
 	// comissão ao agente.
+	if p.product.Category == product.PhysicalMediaCategory ||
+		p.product.Category == product.BookCategory {
+		subs := &PaymentComissionSubscriber{}
+		p.register("payment_commission_subscriber", subs)
+	}
 
 	p.notifyAll()
 }

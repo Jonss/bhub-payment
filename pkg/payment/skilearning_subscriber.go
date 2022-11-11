@@ -9,6 +9,6 @@ const learningToSki string = "Aprendendo a Esquiar"
 type SkiLearningSubscriber struct {
 }
 
-func (s *SkiLearningSubscriber) update(payment *Payment) {
+func (s *SkiLearningSubscriber) update(payment *payment) {
 	payment.packingSlip = &PackingSlip{title: "adicione um vídeo gratuito de “Primeiros Socorros”"}
 }

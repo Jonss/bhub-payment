@@ -1,5 +1,5 @@
 package payment
 
 type Observer interface {
-	update(p *Payment)
+	update(p *payment)
 }
