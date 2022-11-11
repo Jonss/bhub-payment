@@ -1,6 +1,7 @@
 package payment
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/Jonss/bhub-payment/pkg/product"
@@ -53,6 +54,9 @@ func TestPaymentExecute_PhysicalMedia(t *testing.T) {
 	if payment.packingSlip.title != wantPackSlip.title {
 		t.Fatalf("packingSlip.title got %v, want %v", payment.packingSlip.title, wantPackSlip.title)
 	}
+
+	fmt.Println(payment.observers)
+
 	if len(wantSubscriberList) != len(payment.observers) {
 		t.Fatalf("want len(payment.observe) %v, got %v", len(wantSubscriberList), len(payment.observers))
 	}
@@ -64,7 +68,7 @@ func TestPaymentExecute_PhysicalMedia(t *testing.T) {
 	}
 }
 
-func TestPaymentExecute_activateMemmbership(t *testing.T) {
+func TestPaymentExecute_activateMembership(t *testing.T) {
 	// setup
 	payment := NewPayment(1000, product.Product{
 		Name:     "asociassao",
@@ -88,6 +92,66 @@ func TestPaymentExecute_activateMemmbership(t *testing.T) {
 	if !payment.product.IsMember {
 		t.Fatal("product membership expected true")
 	}
+
+	if len(wantSubscriberList) != len(payment.observers) {
+		t.Fatalf("want len(payment.observe) %v, got %v", len(wantSubscriberList), len(payment.observers))
+	}
+
+	for _, s := range wantSubscriberList {
+		if _, ok := payment.observers[s]; !ok {
+			t.Fatalf("want payment.observer=%v, contains", payment.observers)
+		}
+	}
+}
+
+func TestPaymentExecute_upgrateMembership(t *testing.T) {
+	// setup
+	payment := NewPayment(1000, product.Product{
+		Name:     "upgrade_associaçao",
+		Category: product.MemberAssociationUpgradeCategory,
+	})
+
+	if payment.packingSlip != nil {
+		t.Fatal("payment.packingSlip should be nil")
+	}
+	// end setup
+
+	if payment.product.IsMember {
+		t.Fatal("product membership expected true")
+	}
+
+	payment.Execute()
+
+	// assertions
+	wantSubscriberList := []string{"upgrade_membership_subscriber", "send_email_subscriber"}
+
+	if !payment.product.IsMember {
+		t.Fatal("product membership expected true")
+	}
+
+	if len(wantSubscriberList) != len(payment.observers) {
+		t.Fatalf("want len(payment.observe) %v, got %v", len(wantSubscriberList), len(payment.observers))
+	}
+
+	for _, s := range wantSubscriberList {
+		if _, ok := payment.observers[s]; !ok {
+			t.Fatalf("want payment.observer=%v, contains", payment.observers)
+		}
+	}
+}
+
+func TestPaymentExecute_bookCategory(t *testing.T) {
+	// setup
+	payment := NewPayment(1000, product.Product{
+		Name:     "Submissao",
+		Category: product.BookCategory,
+	})
+	// end setup
+
+	payment.Execute()
+
+	// assertions
+	wantSubscriberList := []string{"double_packing_slip", "payment_commission_subscriber"}
 
 	if len(wantSubscriberList) != len(payment.observers) {
 		t.Fatalf("want len(payment.observe) %v, got %v", len(wantSubscriberList), len(payment.observers))

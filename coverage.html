@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>bhubpayment: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/Jonss/bhub-payment/cmd/bhubpayment/main.go (0.0%)</option>
+				
+				<option value="file1">github.com/Jonss/bhub-payment/pkg/payment/activate_membership_subscriber.go (100.0%)</option>
+				
+				<option value="file2">github.com/Jonss/bhub-payment/pkg/payment/doubleshipment_subscriber.go (100.0%)</option>
+				
+				<option value="file3">github.com/Jonss/bhub-payment/pkg/payment/email_subscriber.go (100.0%)</option>
+				
+				<option value="file4">github.com/Jonss/bhub-payment/pkg/payment/payment.go (100.0%)</option>
+				
+				<option value="file5">github.com/Jonss/bhub-payment/pkg/payment/payment_comission_subscriber.go (100.0%)</option>
+				
+				<option value="file6">github.com/Jonss/bhub-payment/pkg/payment/shipment_subscriber.go (100.0%)</option>
+				
+				<option value="file7">github.com/Jonss/bhub-payment/pkg/payment/skilearning_subscriber.go (100.0%)</option>
+				
+				<option value="file8">github.com/Jonss/bhub-payment/pkg/payment/upgrade_membership_subscriber.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">no coverage</span>
+				<span class="cov1">low coverage</span>
+				<span class="cov2">*</span>
+				<span class="cov3">*</span>
+				<span class="cov4">*</span>
+				<span class="cov5">*</span>
+				<span class="cov6">*</span>
+				<span class="cov7">*</span>
+				<span class="cov8">*</span>
+				<span class="cov9">*</span>
+				<span class="cov10">high coverage</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import "fmt"
+
+func main() <span class="cov0" title="0">{
+        fmt.Println("hello, bhub test!")
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package payment
+
+// ● Se o pagamento for para uma nova associação de membro, ative essa associação.
+type ActivateMembershipSubscriber struct {
+}
+
+func (s *ActivateMembershipSubscriber) update(payment *payment) <span class="cov8" title="1">{
+        payment.product.IsMember = true
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package payment
+
+// ● Se o pagamento for para um livro, crie uma guia de remessa duplicada para o
+// departamento de royalties.
+type DoubleShipmentSubscriber struct {
+}
+
+func (s *DoubleShipmentSubscriber) update(payment *payment) <span class="cov8" title="1">{
+        payment.packingSlip = &amp;PackingSlip{title: "guia para o departamento de royalties"}
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package payment
+
+import "fmt"
+
+// ● Se o pagamento for para uma adesão ou upgrade, envie um e-mail ao proprietário e
+// informe-o sobre a ativação/upgrade.
+type EmailSubscriber struct {
+}
+
+func (s *EmailSubscriber) update(payment *payment) <span class="cov10" title="2">{
+        fmt.Println(fmt.Printf("send email when %s", payment.product.Category))
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package payment
+
+import (
+        "fmt"
+
+        "github.com/Jonss/bhub-payment/pkg/product"
+)
+
+type payment struct {
+        observers   map[string]Observer
+        amount      int64
+        product     product.Product
+        packingSlip *PackingSlip
+        comission   *int64
+}
+
+func NewPayment(amount int64, product product.Product) payment <span class="cov7" title="5">{
+        return payment{
+                observers: make(map[string]Observer),
+                product:   product,
+                amount:    amount,
+        }
+}</span>
+
+type PackingSlip struct {
+        title string
+}
+
+func (p *payment) notifyAll() <span class="cov7" title="5">{
+        for _, o := range p.observers </span><span class="cov10" title="9">{
+                o.update(p)
+        }</span>
+}
+
+func (p *payment) register(name string, o Observer) <span class="cov10" title="9">{
+        p.observers[name] = o
+}</span>
+
+func (p *payment) Execute() <span class="cov7" title="5">{
+        fmt.Println("executes payment")
+
+        //  ● Se o pagamento for para o vídeo específico “Aprendendo a Esquiar”, adicione um
+        // vídeo gratuito de “Primeiros Socorros” à guia de remessa (resultado de uma decisão
+        // judicial em 1997).
+        if p.product.Name == learningToSki &amp;&amp; p.product.Category == product.VideoCategory </span><span class="cov1" title="1">{
+                subs := &amp;SkiLearningSubscriber{}
+                p.register("ski_learning_subscriber", subs)
+        }</span>
+
+        //    ● Se o pagamento for para um produto físico, gerar uma guia de remessa para envio.
+        <span class="cov7" title="5">if p.product.Category == product.PhysicalMediaCategory </span><span class="cov1" title="1">{
+                subs := &amp;ShipmentSubscriber{}
+                p.register("shipment_subscriber", subs)
+        }</span>
+
+        // ● Se o pagamento for para um livro, crie uma guia de remessa duplicada para o
+        // departamento de royalties.
+        <span class="cov7" title="5">if p.product.Category == product.BookCategory </span><span class="cov1" title="1">{
+                subs := &amp;DoubleShipmentSubscriber{}
+                p.register("double_packing_slip", subs)
+        }</span>
+
+        // ● Se o pagamento for para uma nova associação de membro, ative essa associação.
+        <span class="cov7" title="5">if p.product.Category == product.MemberAssociationCategory </span><span class="cov1" title="1">{
+                subs := &amp;ActivateMembershipSubscriber{}
+                p.register("activate_membership_subscriber", subs)
+        }</span>
+
+        // ● Se o pagamento for um upgrade para uma associação, aplique o upgrade.
+        <span class="cov7" title="5">if p.product.Category == product.MemberAssociationUpgradeCategory </span><span class="cov1" title="1">{
+                subs := &amp;UpgradeMembershipSubscriber{}
+                p.register("upgrade_membership_subscriber", subs)
+        }</span>
+        // ● Se o pagamento for para uma adesão ou upgrade, envie um e-mail ao proprietário e
+        // informe-o sobre a ativação/upgrade.
+        <span class="cov7" title="5">if p.product.Category == product.MemberAssociationCategory ||
+                p.product.Category == product.MemberAssociationUpgradeCategory </span><span class="cov3" title="2">{
+                subs := &amp;EmailSubscriber{}
+                p.register("send_email_subscriber", subs)
+        }</span>
+
+        // ● Se o pagamento for para um produto físico ou um livro, gere um pagamento de
+        // comissão ao agente.
+        <span class="cov7" title="5">if p.product.Category == product.PhysicalMediaCategory ||
+                p.product.Category == product.BookCategory </span><span class="cov3" title="2">{
+                subs := &amp;PaymentComissionSubscriber{}
+                p.register("payment_commission_subscriber", subs)
+        }</span>
+
+        <span class="cov7" title="5">p.notifyAll()</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package payment
+
+import "fmt"
+
+// ● Se o pagamento for para um produto físico ou um livro, gere um pagamento de
+// comissão ao agente.
+
+type PaymentComissionSubscriber struct{}
+
+func (s *PaymentComissionSubscriber) update(payment *payment) <span class="cov10" title="2">{
+        fmt.Println("chega aqui")
+        commissionAmount := int64(float64(payment.amount) * 0.10)
+        payment.comission = &amp;commissionAmount
+}</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package payment
+
+// Se o pagamento for para um produto físico, gerar uma guia de remessa para envio.
+type ShipmentSubscriber struct {
+}
+
+func (o *ShipmentSubscriber) update(p *payment) <span class="cov8" title="1">{
+        p.packingSlip = &amp;PackingSlip{title: "guia de remessa de envio"}
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package payment
+
+// ● Se o pagamento for para o vídeo específico “Aprendendo a Esquiar”, adicione um
+// vídeo gratuito de “Primeiros Socorros” à guia de remessa (resultado de uma decisão
+// judicial em 1997).
+
+const learningToSki string = "Aprendendo a Esquiar"
+
+type SkiLearningSubscriber struct {
+}
+
+func (s *SkiLearningSubscriber) update(payment *payment) <span class="cov8" title="1">{
+        payment.packingSlip = &amp;PackingSlip{title: "adicione um vídeo gratuito de “Primeiros Socorros”"}
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package payment
+
+// ● Se o pagamento for para uma nova associação de membro, ative essa associação.
+type UpgradeMembershipSubscriber struct {
+}
+
+func (s *UpgradeMembershipSubscriber) update(payment *payment) <span class="cov8" title="1">{
+        payment.product.IsMember = true
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
