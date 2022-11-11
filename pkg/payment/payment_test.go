@@ -24,13 +24,16 @@ func TestPaymentExecute_SkiLessonVideo(t *testing.T) {
 	// assertions
 	wantPackSlip := &PackingSlip{title: "adicione um vídeo gratuito de “Primeiros Socorros”"}
 	wantSubscriberList := []string{"ski_learning_subscriber"}
+	fmt.Println("payment", payment)
+	fmt.Println("payment", payment.observers)
+	fmt.Println("------------------->>>")
 	if payment.packingSlip.title != wantPackSlip.title {
 		t.Fatalf("packingSlip.title got %v, want %v", payment.packingSlip.title, wantPackSlip.title)
 	}
 
 	for _, s := range wantSubscriberList {
 		if _, ok := payment.observers[s]; !ok {
-			t.Fatalf("want payment.observer=%v, contains", payment.observers)
+			t.Fatalf("want payment.observer=%v, contains %v", wantSubscriberList, payment.observers)
 		}
 	}
 }
@@ -152,7 +155,7 @@ func TestPaymentExecute_bookCategory(t *testing.T) {
 
 	// assertions
 	wantSubscriberList := []string{"double_packing_slip", "payment_commission_subscriber"}
-
+	fmt.Println("obs", payment.observers)
 	if len(wantSubscriberList) != len(payment.observers) {
 		t.Fatalf("want len(payment.observe) %v, got %v", len(wantSubscriberList), len(payment.observers))
 	}

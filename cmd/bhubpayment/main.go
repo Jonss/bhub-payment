@@ -1,7 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"github.com/Jonss/bhub-payment/pkg/payment"
+	"github.com/Jonss/bhub-payment/pkg/product"
+)
 
 func main() {
-	fmt.Println("hello, bhub test!")
+	p1 := payment.NewPayment(1000, product.Product{
+		Name:     "Os Lusíadas",
+		Category: product.BookCategory,
+	})
+	p1.Execute()
+
 }
