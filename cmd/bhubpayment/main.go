@@ -12,4 +12,9 @@ func main() {
 	})
 	p1.Execute()
 
+	p2 := payment.NewPayment(1000, product.Product{
+		Name:     "Aprendendo a Esquiar",
+		Category: product.VideoCategory,
+	})
+	p2.Execute()
 }

@@ -37,10 +37,9 @@ func (p *payment) register(name string, o Observer) {
 }
 
 func (p *payment) Execute() {
-	fmt.Println("executes payment")
-
 	// add events
 	subscribeEvents(p)
 
 	p.notifyAll()
+	fmt.Println("\tExecuta o pagamento!")
 }

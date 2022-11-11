@@ -33,7 +33,8 @@ type SkiLearningSubscriber struct {
 }
 
 func (s *SkiLearningSubscriber) update(payment *payment) {
-	payment.packingSlip = &PackingSlip{title: "adicione um vídeo gratuito de “Primeiros Socorros”"}
+	fmt.Println(`adicionando um vídeo gratuito de "Primeiros Socorros"`)
+	payment.packingSlip = &PackingSlip{title: `adicione um vídeo gratuito de "Primeiros Socorros"`}
 }
 
 //end: skiLearningSubscriber
@@ -43,6 +44,7 @@ type UpgradeMembershipSubscriber struct {
 }
 
 func (s *UpgradeMembershipSubscriber) update(payment *payment) {
+	fmt.Println(`upgrade de plano`)
 	payment.product.IsMember = true
 }
 
@@ -53,6 +55,7 @@ type ActivateMembershipSubscriber struct {
 }
 
 func (s *ActivateMembershipSubscriber) update(payment *payment) {
+	fmt.Println(`ativação de plano`)
 	payment.product.IsMember = true
 }
 
@@ -63,6 +66,7 @@ type EmailSubscriber struct {
 }
 
 func (s *EmailSubscriber) update(payment *payment) {
+	fmt.Println(`envio de email`)
 	fmt.Println(fmt.Printf("send email when %s", payment.product.Category))
 }
 
@@ -73,6 +77,7 @@ type DoubleShipmentSubscriber struct {
 }
 
 func (s *DoubleShipmentSubscriber) update(payment *payment) {
+	fmt.Println(`gerando guia para o departamento de royalties`)
 	payment.packingSlip = &PackingSlip{title: "guia para o departamento de royalties"}
 }
 
